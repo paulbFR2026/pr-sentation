@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Catalogue des actions</title>
+<script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
+<style>
+@font-face{font-family:Marianne;font-weight:400;font-display:swap;src:url(https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.15.3/dist/fonts/Marianne-Regular.woff2) format("woff2"),url(https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.15.3/dist/fonts/Marianne-Regular.woff) format("woff")}
+@font-face{font-family:Marianne;font-weight:500;font-display:swap;src:url(https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.15.3/dist/fonts/Marianne-Medium.woff2) format("woff2"),url(https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.15.3/dist/fonts/Marianne-Medium.woff) format("woff")}
+@font-face{font-family:Marianne;font-weight:700;font-display:swap;src:url(https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.15.3/dist/fonts/Marianne-Bold.woff2) format("woff2"),url(https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.15.3/dist/fonts/Marianne-Bold.woff) format("woff")}
+:root{
+  --bleu:#000091; --bleu-hover:#1212ff; --bleu-clair:#e3e3fd; --bleu-tres-clair:#f5f5fe;
+  --rouge:#e1000f; --rouge-clair:#fee9e9;
+  --texte:#161616; --texte-2:#3a3a3a; --texte-3:#666666;
+  --bord:#dddddd; --fond:#ffffff; --fond-alt:#f6f6f6;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--fond);color:var(--texte);font-family:Marianne,Arial,sans-serif;font-size:15px;line-height:1.5}
+button,input,select{font:inherit;color:inherit}
+.app{display:flex;flex-direction:column;min-height:100vh}
+header.top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 24px;border-bottom:1px solid var(--bord)}
+header.top .titre{display:flex;flex-direction:column}
+header.top .sur{font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--texte-3)}
+header.top h1{margin:0;font-size:20px;font-weight:700;color:var(--texte)}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border:1px solid var(--bleu);background:var(--bleu);color:#fff;font-weight:500;cursor:pointer;text-decoration:none;white-space:nowrap}
+.btn:hover{background:var(--bleu-hover);border-color:var(--bleu-hover)}
+.btn.sec{background:#fff;color:var(--bleu)}
+.btn.sec:hover{background:var(--bleu-tres-clair)}
+.corps{display:flex;flex:1;min-height:0}
+nav.themes{width:280px;flex:none;border-right:1px solid var(--bord);padding:16px 0;overflow:auto}
+nav.themes button{display:flex;width:100%;gap:10px;align-items:flex-start;padding:9px 20px;border:0;border-left:3px solid transparent;background:none;text-align:left;cursor:pointer;color:var(--texte-2)}
+nav.themes button:hover{background:var(--fond-alt)}
+nav.themes button[aria-current="true"]{border-left-color:var(--bleu);color:var(--bleu);font-weight:700;background:var(--bleu-tres-clair)}
+nav.themes .num{flex:none;width:22px;font-variant-numeric:tabular-nums;color:var(--texte-3);font-weight:400}
+nav.themes button[aria-current="true"] .num{color:var(--bleu)}
+nav.themes .lib{flex:1}
+nav.themes .nb{flex:none;font-size:12px;color:var(--texte-3);font-weight:400;padding-top:2px}
+nav.themes hr{border:0;border-top:1px solid var(--bord);margin:8px 20px}
+.select-theme{display:none;padding:12px 16px 0}
+.select-theme select{width:100%;padding:8px;border:0;border-bottom:2px solid var(--bleu);background:var(--fond-alt)}
+main{flex:1;min-width:0;padding:24px 32px 48px;overflow:auto}
+.intro h2{margin:0 0 4px;font-size:26px;line-height:1.25;font-weight:700}
+.intro p{margin:0 0 20px;color:var(--texte-2);max-width:760px}
+.outils{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;padding:16px;background:var(--fond-alt);margin-bottom:8px}
+.outils label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--texte-2)}
+.outils input,.outils select{padding:8px 10px;border:0;border-bottom:2px solid var(--texte-2);background:#eeeeee;min-width:170px;border-radius:4px 4px 0 0}
+.outils input{min-width:240px}
+.outils input:focus,.outils select:focus{outline:2px solid var(--bleu);outline-offset:2px}
+.outils .reset{border:0;background:none;color:var(--bleu);text-decoration:underline;cursor:pointer;padding:8px 0}
+.compte{font-size:13px;color:var(--texte-3);margin:0 0 24px}
+section.st{margin-bottom:32px}
+section.st h3{display:flex;align-items:baseline;gap:10px;margin:0 0 12px;font-size:18px;font-weight:700;padding-bottom:6px;border-bottom:1px solid var(--bord)}
+section.st h3 .nb{font-size:13px;font-weight:400;color:var(--texte-3)}
+.bloc-theme>h2{font-size:22px;margin:40px 0 4px;padding-top:16px;border-top:2px solid var(--bleu)}
+.bloc-theme:first-child>h2{margin-top:0}
+.bloc-theme>p{margin:0 0 16px;color:var(--texte-2)}
+.grille{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.carte{display:flex;flex-direction:column;gap:10px;padding:16px;border:1px solid var(--bord);border-bottom:3px solid var(--bleu);background:#fff;text-align:left;cursor:pointer}
+.carte:hover{background:var(--bleu-tres-clair)}
+.carte:focus-visible{outline:2px solid var(--bleu);outline-offset:2px}
+.carte .nom{font-weight:700;color:var(--bleu);font-size:15px;line-height:1.35}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{display:inline-block;padding:2px 10px;border-radius:12px;background:var(--bleu-clair);color:var(--bleu);font-size:12px;font-weight:500}
+.meta{font-size:13px;color:var(--texte-2)}
+.meta b{font-weight:500;color:var(--texte)}
+.pied{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:auto;font-size:12px;color:var(--texte-3)}
+.alerte{display:inline-flex;align-items:center;gap:5px;color:var(--rouge);font-weight:500}
+.alerte::before{content:"";width:8px;height:8px;background:var(--rouge);display:inline-block}
+.vide{padding:32px;text-align:center;color:var(--texte-3);background:var(--fond-alt)}
+.etat{padding:48px 24px;max-width:620px;margin:0 auto;color:var(--texte-2)}
+.etat h2{color:var(--texte);font-size:20px}
+dialog{border:0;padding:0;width:min(640px,94vw);max-height:90vh;box-shadow:0 6px 18px rgba(0,0,18,.16)}
+dialog::backdrop{background:rgba(22,22,22,.55)}
+.fiche{padding:28px 32px 32px;overflow:auto;max-height:90vh}
+.fiche .chemin{font-size:13px;color:var(--texte-3);margin-bottom:6px}
+.fiche h2{margin:0 0 16px;font-size:22px;line-height:1.3;color:var(--texte)}
+.fiche dl{display:grid;grid-template-columns:150px 1fr;gap:10px 16px;margin:16px 0 0}
+.fiche dt{font-size:13px;font-weight:700;color:var(--texte-2)}
+.fiche dd{margin:0}
+.fiche .vig{margin-top:20px;padding:12px 16px;border-left:4px solid var(--rouge);background:var(--rouge-clair)}
+.fiche .vig b{color:var(--rouge);display:block;font-size:13px;margin-bottom:2px}
+.fiche .fermer{float:right;border:0;background:none;color:var(--bleu);cursor:pointer;font-weight:500;padding:4px 0}
+.reglages{padding:28px 32px}
+.reglages h2{margin:0 0 16px;font-size:20px}
+.reglages label{display:flex;flex-direction:column;gap:4px;font-size:14px;margin-bottom:16px}
+.reglages input{padding:8px 10px;border:0;border-bottom:2px solid var(--texte-2);background:#eeeeee}
+.reglages .aide{font-size:12px;color:var(--texte-3)}
+.reglages .actions{display:flex;gap:12px;justify-content:flex-end}
+.demo{background:var(--rouge-clair);color:var(--texte);font-size:13px;padding:6px 24px;border-bottom:1px solid var(--bord)}
+@media (max-width:760px){
+  nav.themes{display:none}
+  .select-theme{display:block}
+  main{padding:16px 16px 40px}
+  header.top{padding:12px 16px;flex-wrap:wrap}
+  .outils input,.outils select{min-width:0;width:100%}
+  .outils label{flex:1 1 100%}
+  .fiche{padding:20px}
+  .fiche dl{grid-template-columns:1fr;gap:2px}
+  .fiche dd{margin-bottom:8px}
+}
+</style>
+</head>
+<body>
+<div class="app" id="app"><div class="etat">Chargement du catalogue…</div></div>
+<dialog id="dlg"></dialog>
+<script>
+const DEMO_DATA = /*__DEMO__*/null;
+const FORCE_DEMO = /*__FORCE_DEMO__*/false;
+
+const etat = {themes: [], courant: null, q: "", obj: "", cib: "", por: "", options: {}, demo: false};
+const app = document.getElementById("app");
+const dlg = document.getElementById("dlg");
+
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const pluriel = (n, mot) => `${n} ${mot}${n > 1 ? "s" : ""}`;
+const norm = s => String(s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+
+function chargerThemes(rows) {
+  const out = [];
+  for (const r of rows) {
+    if (!r || !r.Contenu) continue;
+    try { out.push(JSON.parse(r.Contenu)); } catch (e) { console.warn("Contenu illisible", e); }
+  }
+  out.sort((a, b) => (a.ordre ?? 0) - (b.ordre ?? 0));
+  etat.themes = out;
+  if (!out.find(t => t.theme === etat.courant)) etat.courant = out.length > 1 ? "__tous__" : (out[0] && out[0].theme);
+  rendre();
+}
+
+function nbActions(t) { return t.sous_themes.reduce((n, s) => n + s.actions.length, 0); }
+
+function filtre(a) {
+  if (etat.obj && !a.objectifs.includes(etat.obj)) return false;
+  if (etat.cib && !a.cibles.includes(etat.cib)) return false;
+  if (etat.por && !a.porteur.includes(etat.por)) return false;
+  if (etat.q) {
+    const hay = norm([a.intitule, a.description, a.vigilance, a.exemple, a.objectifs.join(" "), a.cibles.join(" ")].join(" "));
+    if (!norm(etat.q).split(/\s+/).every(m => hay.includes(m))) return false;
+  }
+  return true;
+}
+
+function portee() {
+  return etat.courant === "__tous__" ? etat.themes : etat.themes.filter(t => t.theme === etat.courant);
+}
+
+function valeurs(champ) {
+  const set = new Set();
+  for (const t of portee()) for (const s of t.sous_themes) for (const a of s.actions) (a[champ] || []).forEach(v => set.add(v));
+  return [...set].sort((x, y) => x.localeCompare(y, "fr"));
+}
+
+function selectHtml(id, label, champ, val) {
+  const opts = valeurs(champ);
+  if (val && !opts.includes(val)) opts.unshift(val);
+  return `<label>${label}<select id="${id}"><option value="">Tous</option>${opts.map(o => `<option${o === val ? " selected" : ""}>${esc(o)}</option>`).join("")}</select></label>`;
+}
+
+function carteHtml(a, ti, si, ai) {
+  return `<button class="carte" data-k="${ti}|${si}|${ai}">
+    <span class="nom">${esc(a.intitule)}</span>
+    ${a.objectifs.length ? `<span class="tags">${a.objectifs.map(o => `<span class="tag">${esc(o)}</span>`).join("")}</span>` : ""}
+    ${a.cibles.length ? `<span class="meta"><b>Cibles :</b> ${esc(a.cibles.join(", "))}</span>` : ""}
+    <span class="pied">
+      ${a.controle ? `<span>Contrôle ${esc(a.controle.toLowerCase())}</span>` : ""}
+      ${a.visibilite ? `<span>${esc(a.visibilite)}</span>` : ""}
+      ${a.delai ? `<span>Délai : ${esc(a.delai.toLowerCase())}</span>` : ""}
+      ${a.vigilance ? `<span class="alerte">Vigilance</span>` : ""}
+    </span>
+  </button>`;
+}
+
+function themeHtml(t, ti, avecTitre) {
+  let total = 0;
+  const secs = t.sous_themes.map((s, si) => {
+    const items = s.actions.map((a, ai) => filtre(a) ? carteHtml(a, ti, si, ai) : "").filter(Boolean);
+    total += items.length;
+    if (!items.length) return "";
+    return `<section class="st"><h3>${esc(s.nom)} <span class="nb">${pluriel(items.length, "action")}</span></h3><div class="grille">${items.join("")}</div></section>`;
+  }).join("");
+  if (!total) return {html: avecTitre ? "" : `<div class="vide">Aucune action ne correspond à ces critères.</div>`, total};
+  const tete = avecTitre ? `<h2>${t.ordre ? esc(t.ordre) + ". " : ""}${esc(t.theme)}</h2>${t.description ? `<p>${esc(t.description)}</p>` : ""}` : "";
+  return {html: `<div class="bloc-theme">${tete}${secs}</div>`, total};
+}
+
+function rendre() {
+  if (!etat.themes.length) {
+    app.innerHTML = `<div class="etat"><h2>Aucune donnée à afficher</h2>
+      <p>Ce widget lit la colonne <b>Contenu</b> de la table <b>Vitrine</b>. Vérifiez que le widget est bien rattaché à cette table et que la colonne est associée dans le panneau de configuration.</p></div>`;
+    return;
+  }
+  const multi = etat.themes.length > 1;
+  const titre = etat.options.titre || "Catalogue des actions des postes";
+  const formUrl = etat.options.formUrl;
+  const nav = multi ? `<nav class="themes" aria-label="Thématiques">
+      <button data-t="__tous__" aria-current="${etat.courant === "__tous__"}"><span class="num">—</span><span class="lib">Toutes les thématiques</span><span class="nb">${etat.themes.reduce((n, t) => n + nbActions(t), 0)}</span></button><hr>
+      ${etat.themes.map(t => `<button data-t="${esc(t.theme)}" aria-current="${etat.courant === t.theme}"><span class="num">${esc(t.ordre ?? "")}</span><span class="lib">${esc(t.theme)}</span><span class="nb">${nbActions(t)}</span></button>`).join("")}
+    </nav>` : "";
+  const selTheme = multi ? `<div class="select-theme"><select id="selTheme" aria-label="Thématique">
+      <option value="__tous__"${etat.courant === "__tous__" ? " selected" : ""}>Toutes les thématiques</option>
+      ${etat.themes.map(t => `<option value="${esc(t.theme)}"${etat.courant === t.theme ? " selected" : ""}>${esc(t.ordre ?? "")}. ${esc(t.theme)}</option>`).join("")}
+    </select></div>` : "";
+
+  let intro, contenu, total = 0;
+  if (etat.courant === "__tous__") {
+    intro = `<h2>Toutes les thématiques</h2><p>Ensemble des actions que les postes peuvent mobiliser pour porter un message.</p>`;
+    contenu = etat.themes.map((t, ti) => { const r = themeHtml(t, ti, true); total += r.total; return r.html; }).join("");
+    if (!total) contenu = `<div class="vide">Aucune action ne correspond à ces critères.</div>`;
+  } else {
+    const ti = etat.themes.findIndex(t => t.theme === etat.courant);
+    const t = etat.themes[ti];
+    intro = `<h2>${esc(t.theme)}</h2>${t.description ? `<p>${esc(t.description)}</p>` : ""}`;
+    const r = themeHtml(t, ti, false); total = r.total; contenu = r.html;
+  }
+  const filtresActifs = etat.q || etat.obj || etat.cib || etat.por;
+
+  app.innerHTML = `
+    ${etat.demo ? `<div class="demo">Aperçu hors Grist, avec le contenu initial de la base.</div>` : ""}
+    <header class="top">
+      <div class="titre"><span class="sur">Diplomatie publique</span><h1>${esc(titre)}</h1></div>
+      ${formUrl ? `<a class="btn" href="${esc(formUrl)}" target="_blank" rel="noopener">Proposer une action</a>` : ""}
+    </header>
+    ${selTheme}
+    <div class="corps">
+      ${nav}
+      <main>
+        <div class="intro">${intro}</div>
+        <div class="outils">
+          <label>Rechercher<input id="q" type="search" value="${esc(etat.q)}" placeholder="Mot-clé"></label>
+          ${selectHtml("fObj", "Objectif", "objectifs", etat.obj)}
+          ${selectHtml("fCib", "Cible", "cibles", etat.cib)}
+          ${selectHtml("fPor", "Porteur", "porteur", etat.por)}
+          ${filtresActifs ? `<button class="reset" id="reset">Effacer les filtres</button>` : ""}
+        </div>
+        <p class="compte">${pluriel(total, "action")}${filtresActifs ? " correspondant aux critères" : ""}</p>
+        ${contenu}
+      </main>
+    </div>`;
+  lier();
+}
+
+function lier() {
+  app.querySelectorAll("nav.themes button").forEach(b => b.onclick = () => { etat.courant = b.dataset.t; rendre(); app.querySelector("main").scrollTop = 0; });
+  const st = document.getElementById("selTheme"); if (st) st.onchange = () => { etat.courant = st.value; rendre(); };
+  const q = document.getElementById("q");
+  let minuterie;
+  q.oninput = () => { clearTimeout(minuterie); minuterie = setTimeout(() => { etat.q = q.value; const pos = q.selectionStart; rendre(); const n = document.getElementById("q"); n.focus(); n.setSelectionRange(pos, pos); }, 200); };
+  [["fObj", "obj"], ["fCib", "cib"], ["fPor", "por"]].forEach(([id, k]) => { const s = document.getElementById(id); s.onchange = () => { etat[k] = s.value; rendre(); }; });
+  const r = document.getElementById("reset"); if (r) r.onclick = () => { etat.q = etat.obj = etat.cib = etat.por = ""; rendre(); };
+  app.querySelectorAll(".carte").forEach(c => c.onclick = () => ouvrirFiche(...c.dataset.k.split("|").map(Number)));
+}
+
+function ligne(lib, val) {
+  const v = Array.isArray(val) ? val.join(", ") : val;
+  return v ? `<dt>${lib}</dt><dd>${esc(v)}</dd>` : "";
+}
+
+function ouvrirFiche(ti, si, ai) {
+  const t = etat.themes[ti], s = t.sous_themes[si], a = s.actions[ai];
+  dlg.innerHTML = `<div class="fiche">
+    <button class="fermer" id="fermer">Fermer</button>
+    <div class="chemin">${esc(t.theme)} › ${esc(s.nom)}</div>
+    <h2>${esc(a.intitule)}</h2>
+    ${a.description ? `<p>${esc(a.description)}</p>` : ""}
+    <dl>
+      ${ligne("Objectifs", a.objectifs)}${ligne("Cibles", a.cibles)}${ligne("Porteur", a.porteur)}
+      ${ligne("Contrôle du message", a.controle)}${ligne("Visibilité", a.visibilite)}${ligne("Délai de mise en œuvre", a.delai)}
+      ${ligne("Ressources", a.ressources)}${ligne("Indicateurs", a.indicateurs)}${ligne("Exemple", a.exemple)}
+    </dl>
+    ${a.vigilance ? `<div class="vig"><b>Point de vigilance</b>${esc(a.vigilance)}</div>` : ""}
+  </div>`;
+  dlg.showModal();
+  document.getElementById("fermer").onclick = () => dlg.close();
+}
+dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
+
+function ouvrirReglages() {
+  const o = etat.options || {};
+  dlg.innerHTML = `<form class="reglages" method="dialog">
+    <h2>Réglages du widget</h2>
+    <label>Titre affiché<input id="rTitre" value="${esc(o.titre || "")}" placeholder="Catalogue des actions des postes"></label>
+    <label>Lien du formulaire public<input id="rForm" type="url" value="${esc(o.formUrl || "")}" placeholder="https://…">
+      <span class="aide">Lien obtenu en publiant le formulaire de la table Propositions. Laisser vide pour masquer le bouton « Proposer une action ».</span></label>
+    <div class="actions"><button class="btn sec" value="annuler">Annuler</button><button class="btn" id="rOk" value="ok">Enregistrer</button></div>
+  </form>`;
+  dlg.showModal();
+  document.getElementById("rOk").onclick = async (e) => {
+    e.preventDefault();
+    const opts = {titre: document.getElementById("rTitre").value.trim(), formUrl: document.getElementById("rForm").value.trim()};
+    try { await grist.setOptions(opts); } catch (err) { alert("Enregistrement impossible : droits insuffisants sur ce document."); }
+    etat.options = opts; dlg.close(); rendre();
+  };
+}
+
+const enIframe = window.self !== window.top;
+const demo = FORCE_DEMO || !enIframe || new URLSearchParams(location.search).has("demo");
+if (demo && DEMO_DATA) {
+  etat.demo = true;
+  etat.options = {formUrl: "#"};
+  chargerThemes(DEMO_DATA.map(d => ({Contenu: JSON.stringify(d)})));
+} else if (typeof grist !== "undefined") {
+  grist.ready({
+    requiredAccess: "read table",
+    columns: [{name: "Contenu", title: "Contenu (JSON de la thématique)", type: "Text"}],
+    onEditOptions: ouvrirReglages,
+  });
+  grist.onOptions(opts => { etat.options = opts || {}; if (etat.themes.length) rendre(); });
+  grist.onRecords(records => {
+    const rows = grist.mapColumnNames(records);
+    chargerThemes(rows || []);
+  });
+} else {
+  app.innerHTML = `<div class="etat"><h2>Widget à ouvrir dans Grist</h2><p>Ce fichier est un widget personnalisé Grist. Hébergez-le, puis ajoutez-le à une page via « Widget personnalisé ».</p></div>`;
+}
+</script>
+</body>
+</html>
