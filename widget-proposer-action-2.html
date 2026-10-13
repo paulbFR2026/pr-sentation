@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Proposer une action</title>
+<script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
+<style>
+  @font-face {
+    font-family: "Marianne";
+    src: url("https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.12.1/dist/fonts/Marianne-Regular.woff2") format("woff2");
+    font-weight: 400;
+  }
+  @font-face {
+    font-family: "Marianne";
+    src: url("https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.12.1/dist/fonts/Marianne-Bold.woff2") format("woff2");
+    font-weight: 700;
+  }
+  :root {
+    --bleu-france: #000091;
+    --bleu-france-hover: #1212ff;
+    --rouge-marianne: #E1000F;
+    --texte: #161616;
+    --texte-2: #3a3a3a;
+    --bordure: #dddddd;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: #ffffff;
+    font-family: "Marianne", Arial, sans-serif;
+    color: var(--texte);
+  }
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+  .encart {
+    max-width: 560px;
+    width: 100%;
+    border: 1px solid var(--bordure);
+    border-left: 4px solid var(--bleu-france);
+    padding: 20px 24px;
+  }
+  h1 {
+    margin: 0 0 8px;
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1.4;
+  }
+  p {
+    margin: 0 0 16px;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: var(--texte-2);
+  }
+  a.bouton {
+    background: var(--bleu-france);
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.95rem;
+    padding: 10px 18px;
+  }
+  a.bouton {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .icone { width: 16px; height: 16px; flex-shrink: 0; }
+  .sr-only {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+  }
+  a.bouton:hover, a.bouton:focus-visible { background: var(--bleu-france-hover); }
+  a.bouton:focus-visible { outline: 2px solid #0a76f6; outline-offset: 2px; }
+</style>
+</head>
+<body>
+  <div class="encart">
+    <h1>Une action manque au catalogue ?</h1>
+    <p>Proposez une idée d'action de communication ou d'influence qui n'y figure pas encore. Votre proposition sera examinée avant un éventuel ajout.</p>
+    <a class="bouton" id="lien"
+       href="https://grist.numerique.gouv.fr/o/docs/forms/6p6Bh28imRT2qeQkBxbKnY/27"
+       target="_blank" rel="noopener">Proposer une action<svg class="icone" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10 6v2H5v11h11v-5h2v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6Zm11-3v8h-2V6.413l-7.793 7.794-1.414-1.414L17.585 5H13V3h8Z" fill="currentColor"/></svg><span class="sr-only"> (nouvelle fenêtre)</span></a>
+  </div>
+  <script>
+    // L'URL du formulaire est lue dans la table liée (1re cellule contenant un lien http).
+    // À défaut, le lien inscrit dans le bouton est conservé.
+    try {
+      grist.ready({ requiredAccess: 'read table' });
+      grist.onRecords(function (rows) {
+        var lien = document.getElementById('lien');
+        for (var i = 0; i < (rows || []).length; i++) {
+          var r = rows[i];
+          for (var k in r) {
+            var v = r[k];
+            if (typeof v === 'string' && /^https?:\/\//.test(v.trim())) {
+              lien.href = v.trim();
+              return;
+            }
+          }
+        }
+      });
+    } catch (e) {}
+  </script>
+</body>
+</html>
